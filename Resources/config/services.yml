@@ -2,26 +2,23 @@ services:
     wubook_api.client:
         class: Kamilwozny\WubookAPIBundle\Client
         arguments:
+            - @wubook_api.token_provider
             - %wubook_api.client_username%
             - %wubook_api.client_password%
             - %wubook_api.provider_key%
             - %wubook_api.url%
             - %wubook_api.property_id%
-        calls:
-            - [setToken, [%wubook_api.token%]]
         public: false
     wubook_api.base_handler:
         class: Kamilwozny\WubookAPIBundle\Handler\BaseHandler
     wubook_api.token_handler:
         class: Kamilwozny\WubookAPIBundle\Handler\TokenHandler
-        arguments: [@wubook_api.token.file_manager]
         parent: "wubook_api.base_handler"
         public: true
     wubook_api.reservation_handler:
         class: Kamilwozny\WubookAPIBundle\Handler\ReservationHandler
         public: true
         parent: "wubook_api.base_handler"
-    wubook_api.token.file_manager:
-        class: Kamilwozny\WubookAPIBundle\Utils\YamlFileManager
-        calls:
-            - [load, [%wubook_api.token_file_path%]]
+    wubook_api.token_provider:
+        class: Kamilwozny\WubookAPIBundle\Utils\YamlTokenProvider
+        arguments: ["%kernel.cache_dir%/wubook_api_token.yml"]

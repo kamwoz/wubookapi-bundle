@@ -2,20 +2,8 @@
 
 namespace Kamilwozny\WubookAPIBundle\Handler;
 
-use Kamilwozny\WubookAPIBundle\Utils\YamlFileManager;
-
 class TokenHandler extends BaseHandler
 {
-    /**
-     * @var YamlFileManager
-     */
-    private $yamlFileManager;
-
-    public function __construct(YamlFileManager $yamlFileManager)
-    {
-        $this->yamlFileManager = $yamlFileManager;
-    }
-
     public function acquireToken()
     {
         $args = [
@@ -29,8 +17,7 @@ class TokenHandler extends BaseHandler
         $token = '';
         if(!$response->errno) {
             $token = $response->value()->me['array'][1]->scalarval();
-            $this->saveToken($token);
-            $this->client->setToken($token);
+            $this->client->tokenProvider->setToken($token);
         }
 
         return $token; //todo handle token not found case
@@ -38,24 +25,21 @@ class TokenHandler extends BaseHandler
 
     public function isCurrentTokenValid()
     {
-        $isValid = $this->request('is_token_valid'); //todo boola zwracac
-        return true;
+        $response = $this->client->request('is_token_valid', [], true, false, false);
+        $isTokenValid = $response->value()->me['array'][0]->scalarval() == 0;
+
+        return $isTokenValid;
     }
 
     public function releaseCurrentToken()
     {
-        $response = $this->client->request('release_token', [], true, false);
+        $response = $this->client->request('release_token', [], true, false, false);
 
         $isTokenReleased = $response->value()->me['array'][0]->scalarval() == 0;
         if($isTokenReleased) {
-            $this->yamlFileManager->releaseToken();
+            $this->client->tokenProvider->removeCurrentSavedToken();
         }
 
         return $isTokenReleased;
-    }
-
-    private function saveToken($token)
-    {
-        $this->yamlFileManager->write(['wubook_token' => $token]);
     }
 }

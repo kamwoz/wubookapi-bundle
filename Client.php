@@ -3,6 +3,7 @@
 namespace Kamilwozny\WubookAPIBundle;
 
 use Kamilwozny\WubookAPIBundle\Handler\TokenHandler;
+use Kamilwozny\WubookAPIBundle\Utils\TokenProviderInterface;
 use Kamilwozny\WubookAPIBundle\Utils\TypeResolver;
 use PhpXmlRpc\Request;
 use PhpXmlRpc\Value;
@@ -14,11 +15,6 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
  */
 class Client
 {
-    /**
-     * @var string token used in request
-     */
-    private $token = null;
-
     /**
      * @var string url target
      */
@@ -40,14 +36,21 @@ class Client
     private $tokenHandler;
 
     /**
+     * @var TokenProviderInterface
+     */
+    public $tokenProvider;
+
+    /**
+     * @param TokenProviderInterface $tokenProvider
      * @param $username
      * @param $password
      * @param $provider_key
      * @param $apiUrl
      * @param $propertyId
      */
-    public function __construct($username, $password, $provider_key, $apiUrl, $propertyId)
+    public function __construct(TokenProviderInterface $tokenProvider, $username, $password, $provider_key, $apiUrl, $propertyId)
     {
+        $this->tokenProvider = $tokenProvider;
         $this->credentials = [
             'username' => $username,
             'password' => $password,
@@ -61,22 +64,23 @@ class Client
      * Perform request to wubook api
      *
      * @param $method
-     * @param $args array, NOTICE: order is important here
-     * @param bool $passToken true if you want pass token as first parameter
+     * @param $args                array, NOTICE: order is important here
+     * @param bool $passToken      true if you want pass token as first parameter
      * @param bool $passPropertyId true if you want pass property id as second parameter
+     * @param bool $tryAgainWithNewToken
      *
-     * @return mixed|\PhpXmlRpc\Value|string
+     * @return mixed|Value|string
      * @internal param bool|true $useToken true if you want use token from config
      */
     public function request($method, array $args, $passToken = true, $passPropertyId = true, $tryAgainWithNewToken = true)
     {
-        $methodWhitelist = ['acquire_token', 'release_token'];
+        $methodWhitelist = ['acquire_token', 'release_token', 'is_token_valid'];
 
         if(!in_array($method, $methodWhitelist)) {
             throw new MethodNotAllowedException($methodWhitelist, 'Method not allowed, allowed: ' . join(', ', $methodWhitelist));
         }
 
-        $messageArgs = $passToken ? [new Value($this->token, 'string')] : [];
+        $messageArgs = $passToken ? [new Value($this->tokenProvider->getToken(), 'string')] : [];
         $messageArgs[] = $passPropertyId ? new Value($this->propertyId, 'string') : null;
 
         $server = new \PhpXmlRpc\Client($this->apiUrl);
@@ -113,10 +117,5 @@ class Client
     public function setTokenHandler(TokenHandler $tokenHandler)
     {
         $this->tokenHandler = $tokenHandler;
-    }
-
-    public function setToken($token)
-    {
-        $this->token = $token;
     }
 }

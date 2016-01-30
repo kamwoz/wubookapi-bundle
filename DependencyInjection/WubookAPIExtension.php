@@ -30,17 +30,9 @@ class WubookAPIExtension extends Extension
         $container->setParameter('wubook_api.url', $config['url']);
         $container->setParameter('wubook_api.token', $config['token']);
 
-        $container->setParameter('wubook_api.token_file_path', $container->getParameter('kernel.cache_dir') . '/wubook_api_token.yml');
-
         //done this way to avoid circular reference
         $clientDefinition = $container->getDefinition('wubook_api.client');
         $clientDefinition->addMethodCall('setTokenHandler', [new Reference('wubook_api.token_handler')]);
-        //if token was not passed, load id from a file
-        if($config['token'] === null) {
-            $data = $container->get('wubook_api.token.file_manager')->getContent();
-            $token = $data['wubook_token'];
-            $clientDefinition->addMethodCall('setToken', [$token]);
-        }
         $container->setDefinition('wubook_api.client', $clientDefinition);
 
         $baseHandlerDef = $container->getDefinition('wubook_api.base_handler');
