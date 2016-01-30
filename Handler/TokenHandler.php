@@ -24,24 +24,38 @@ class TokenHandler extends BaseHandler
             $this->client->credentials['provider_key']
         ];
 
-        $token = $this->client->request('acquire_token', $args);
-        if($token) {
-            $this->saveToken($token); //todo string token
+        $response = $this->client->request('acquire_token', $args, false, false);
+
+        $token = '';
+        if(!$response->errno) {
+            $token = $response->value()->me['array'][1]->scalarval();
+            $this->saveToken($token);
+            $this->client->setToken($token);
         }
 
-        return $token;//todo wyciagnac string token
+        return $token; //todo handle token not found case
     }
 
-    public function isTokenValid($token)
+    public function isCurrentTokenValid()
     {
-        $args = [ $token ];
-        $isValid = $this->request('is_token_valid', $args); //todo boola zwracac
+        $isValid = $this->request('is_token_valid'); //todo boola zwracac
         return true;
+    }
+
+    public function releaseCurrentToken()
+    {
+        $response = $this->client->request('release_token', [], true, false);
+
+        $isTokenReleased = $response->value()->me['array'][0]->scalarval() == 0;
+        if($isTokenReleased) {
+            $this->yamlFileManager->releaseToken();
+        }
+
+        return $isTokenReleased;
     }
 
     private function saveToken($token)
     {
-        $this->yamlFileManager->write(['parameters' => ['wubook_token' => $token]]);
-        $this->yamlFileManager->clearCache();
+        $this->yamlFileManager->write(['wubook_token' => $token]);
     }
 }

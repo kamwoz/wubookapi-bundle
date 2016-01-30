@@ -3,6 +3,9 @@
 namespace Kamilwozny\WubookAPIBundle;
 
 use Kamilwozny\WubookAPIBundle\Handler\TokenHandler;
+use Kamilwozny\WubookAPIBundle\Utils\TypeResolver;
+use PhpXmlRpc\Request;
+use PhpXmlRpc\Value;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
 /**
@@ -65,24 +68,31 @@ class Client
      * @return mixed|\PhpXmlRpc\Value|string
      * @internal param bool|true $useToken true if you want use token from config
      */
-    public function request($method, array $args, $passToken = true, $passPropertyId = true)
+    public function request($method, array $args, $passToken = true, $passPropertyId = true, $tryAgainWithNewToken = true)
     {
-        $methodWhitelist = ['acquire_token'];
+        $methodWhitelist = ['acquire_token', 'release_token'];
 
         if(!in_array($method, $methodWhitelist)) {
-            throw new MethodNotAllowedException($methodWhitelist);
+            throw new MethodNotAllowedException($methodWhitelist, 'Method not allowed, allowed: ' . join(', ', $methodWhitelist));
         }
 
-        $messageArgs = $passToken ? [new \xmlrpcval($this->token, 'string')] : [];
-        $messageArgs[] = $passPropertyId ? new \xmlrpcval($this->propertyId, 'string') : null;
+        $messageArgs = $passToken ? [new Value($this->token, 'string')] : [];
+        $messageArgs[] = $passPropertyId ? new Value($this->propertyId, 'string') : null;
 
-        $server = new \xmlrpc_client($this->apiUrl);
+        $server = new \PhpXmlRpc\Client($this->apiUrl);
 
-        $messageArgs = array_merge($this->createMessageArg($args));
-        $message = new \xmlrpcmsg($method, $messageArgs);
+        $messageArgs = array_merge($messageArgs, $this->createMessageArg($args));
+        $request = new Request($method, $messageArgs);
 
-        die(\Kint::dump($server->send($method, $message)->value()));
-        return $server->send($message)->value();
+        $response =  $server->send($request);
+
+        $isResponseOK = (int) $response->value()->me['array'][0]->scalarval() == 0;
+        if(!$isResponseOK && $tryAgainWithNewToken) {
+            $this->tokenHandler->acquireToken();
+            return self::request($method, $args, $passToken, $passPropertyId, false);
+        } else {
+            return $response;
+        }
     }
 
     private function createMessageArg($args)
@@ -93,7 +103,7 @@ class Client
             if($type === 'array') {
                 $messageArgs[] = $this->createMessageArg($value);
             } else {
-                $messageArgs[] = new \xmlrpcval($value, $type);
+                $messageArgs[] = new Value($value, $type);
             }
         }
 

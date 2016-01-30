@@ -14,14 +14,14 @@ services:
         class: Kamilwozny\WubookAPIBundle\Handler\BaseHandler
     wubook_api.token_handler:
         class: Kamilwozny\WubookAPIBundle\Handler\TokenHandler
-        arguments: [@wubook_api.config.file_manager]
+        arguments: [@wubook_api.token.file_manager]
         parent: "wubook_api.base_handler"
         public: true
     wubook_api.reservation_handler:
         class: Kamilwozny\WubookAPIBundle\Handler\ReservationHandler
         public: true
         parent: "wubook_api.base_handler"
-    wubook_api.config.file_manager:
+    wubook_api.token.file_manager:
         class: Kamilwozny\WubookAPIBundle\Utils\YamlFileManager
         calls:
-            - [setKernelCacheDir, [%kernel.cache_dir%]]
+            - [load, [%wubook_api.token_file_path%]]

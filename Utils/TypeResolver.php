@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Service\WubookAPI;
+namespace Kamilwozny\WubookAPIBundle\Utils;
 
 /**
  * Class TypeResolver
