@@ -1,5 +1,5 @@
 services:
-    kw.wubook_client:
+    wubook_api.client:
         class: Kamilwozny\WubookAPIBundle\Client
         arguments:
             - %wubook_api.client_username%
@@ -9,21 +9,19 @@ services:
             - %wubook_api.property_id%
         calls:
             - [setToken, [%wubook_api.token%]]
-        abstract: true
         public: false
-        configurator: [@kw.client_configurator, configure]
-    kw.client_configurator:
-        class: Kamilwozny\WubookAPIBundle\DependencyInjection\Configurator\ClientConfigurator
-        arguments: [@kw.wubook_token_handler]
-    kw.wubook_token_handler:
+    wubook_api.base_handler:
+        class: Kamilwozny\WubookAPIBundle\Handler\BaseHandler
+    wubook_api.token_handler:
         class: Kamilwozny\WubookAPIBundle\Handler\TokenHandler
-        parent: kw.wubook_client
-        arguments: [@kw.wubook_config.file_manager]
-    kw.wubook_reservation_handler:
+        arguments: [@wubook_api.config.file_manager]
+        parent: "wubook_api.base_handler"
+        public: true
+    wubook_api.reservation_handler:
         class: Kamilwozny\WubookAPIBundle\Handler\ReservationHandler
-        parent: kw.wubook_client
-    kw.wubook_config.file_manager:
+        public: true
+        parent: "wubook_api.base_handler"
+    wubook_api.config.file_manager:
         class: Kamilwozny\WubookAPIBundle\Utils\YamlFileManager
         calls:
-            - [load, ["%kernel.root_dir%/config/wubook_parameters.yml"]]
             - [setKernelCacheDir, [%kernel.cache_dir%]]

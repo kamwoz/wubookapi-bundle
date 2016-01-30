@@ -2,9 +2,7 @@
 
 namespace Kamilwozny\WubookAPIBundle\Handler;
 
-use Kamilwozny\WubookAPIBundle\Client;
-
-class ReservationHandler extends Client
+class ReservationHandler extends BaseHandler
 {
     /**
      * Fetch reservations from wubook and put it to our db

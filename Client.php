@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
  * Responsibility: perform request to wubook API
  * @package AppBundle\Service\WubookAPI
  */
-abstract class Client
+class Client
 {
     /**
      * @var string token used in request
@@ -29,7 +29,7 @@ abstract class Client
     /**
      * @var array credentials used to acquire the token
      */
-    protected $credentials = [];
+    public $credentials = [];
 
     /**
      * @var TokenHandler
@@ -66,7 +66,7 @@ abstract class Client
      * @return mixed|\PhpXmlRpc\Value|string
      * @internal param bool|true $useToken true if you want use token from config
      */
-    protected function request($method, array $args, $passToken = true, $passPropertyId = true)
+    public function request($method, array $args, $passToken = true, $passPropertyId = true)
     {
         $methodWhitelist = ['acquire_token'];
 
@@ -106,7 +106,7 @@ abstract class Client
         $this->tokenHandler = $tokenHandler;
     }
 
-    private function setToken($token)
+    public function setToken($token)
     {
         $this->token = $token;
     }

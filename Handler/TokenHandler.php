@@ -2,17 +2,16 @@
 
 namespace Kamilwozny\WubookAPIBundle\Handler;
 
-use Kamilwozny\WubookAPIBundle\Client;
 use Kamilwozny\WubookAPIBundle\Utils\YamlFileManager;
 
-class TokenHandler extends Client
+class TokenHandler extends BaseHandler
 {
     /**
      * @var YamlFileManager
      */
     private $yamlFileManager;
 
-    public function __constructor(YamlFileManager $yamlFileManager)
+    public function __construct(YamlFileManager $yamlFileManager)
     {
         $this->yamlFileManager = $yamlFileManager;
     }
@@ -20,12 +19,12 @@ class TokenHandler extends Client
     public function acquireToken()
     {
         $args = [
-            $this->credentials['username'],
-            $this->credentials['password'],
-            $this->credentials['provider_key']
+            $this->client->credentials['username'],
+            $this->client->credentials['password'],
+            $this->client->credentials['provider_key']
         ];
 
-        $token = $this->request('acquire_token', $args);
+        $token = $this->client->request('acquire_token', $args);
         if($token) {
             $this->saveToken($token); //todo string token
         }
