@@ -58,8 +58,7 @@ class Client
      * Perform request to wubook api
      *
      * @param $method
-     * @param $args array, NOTICE: order is important here. Example values
-     *                   'some string val', 5, 5.0, array()
+     * @param $args array, NOTICE: order is important here
      * @param bool $passToken true if you want pass token as first parameter
      * @param bool $passPropertyId true if you want pass property id as second parameter
      *
