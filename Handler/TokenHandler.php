@@ -2,6 +2,8 @@
 
 namespace Kamilwozny\WubookAPIBundle\Handler;
 
+use Kamilwozny\WubookAPIBundle\Utils\RpcValueDecoder;
+
 class TokenHandler extends BaseHandler
 {
     public function acquireToken()
@@ -13,33 +15,49 @@ class TokenHandler extends BaseHandler
         ];
 
         $response = $this->client->request('acquire_token', $args, false, false);
+        $parsedResponse = RpcValueDecoder::parseRpcValue($response->value());
 
-        $token = '';
-        if(!$response->errno) {
+        $tokenAcquired = $parsedResponse[0] == 0;
+        if($tokenAcquired) {
             $token = $response->value()->me['array'][1]->scalarval();
             $this->client->tokenProvider->setToken($token);
+
+            return $token;
         }
 
-        return $token; //todo handle token not found case
+        return null; //todo handle token not found case
     }
 
-    public function isCurrentTokenValid()
+    public function isCurrentTokenValid($returnWholeResponse = false)
     {
         $response = $this->client->request('is_token_valid', [], true, false, false);
-        $isTokenValid = $response->value()->me['array'][0]->scalarval() == 0;
+        $parsedResponse = RpcValueDecoder::parseRpcValue($response->value());
 
-        return $isTokenValid;
+        $isTokenValid = $parsedResponse[0] == 0;
+
+        return $returnWholeResponse ? $parsedResponse : $isTokenValid;
     }
 
     public function releaseCurrentToken()
     {
         $response = $this->client->request('release_token', [], true, false, false);
+        $parsedResponse = RpcValueDecoder::parseRpcValue($response->value());
 
-        $isTokenReleased = $response->value()->me['array'][0]->scalarval() == 0;
+        $isTokenReleased = $parsedResponse[0] == 0;
         if($isTokenReleased) {
             $this->client->tokenProvider->removeCurrentSavedToken();
         }
 
         return $isTokenReleased;
     }
+
+    public function providerInfo()
+    {
+        $response = $this->client->request('provider_info', [], true, false, false);
+        $parsedResponse = RpcValueDecoder::parseRpcValue($response->value());
+
+        return $parsedResponse[1];
+    }
+
+
 }

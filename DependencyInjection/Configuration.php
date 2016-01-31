@@ -20,7 +20,6 @@ class Configuration implements ConfigurationInterface
             ->integerNode('property_id')->isRequired()->end()
             ->scalarNode('url')
                 ->defaultValue('https://wubook.net/xrws/')->end()
-            ->scalarNode('token')->defaultValue(null)->end()
             ->end()
         ;
 

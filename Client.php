@@ -74,7 +74,7 @@ class Client
      */
     public function request($method, array $args, $passToken = true, $passPropertyId = true, $tryAgainWithNewToken = true)
     {
-        $methodWhitelist = ['acquire_token', 'release_token', 'is_token_valid'];
+        $methodWhitelist = ['acquire_token', 'release_token', 'is_token_valid', 'provider_info'];
 
         if(!in_array($method, $methodWhitelist)) {
             throw new MethodNotAllowedException($methodWhitelist, 'Method not allowed, allowed: ' . join(', ', $methodWhitelist));
