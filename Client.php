@@ -80,13 +80,13 @@ class Client
             throw new MethodNotAllowedException($methodWhitelist, 'Method not allowed, allowed: ' . join(', ', $methodWhitelist));
         }
 
-        $messageArgs = $passToken ? [new Value($this->tokenProvider->getToken(), 'string')] : [];
-        $messageArgs[] = $passPropertyId ? new Value($this->propertyId, 'string') : null;
+        $requestArgs = $passToken ? [new Value($this->tokenProvider->getToken(), 'string')] : [];
+        $requestArgs[] = $passPropertyId ? new Value($this->propertyId, 'string') : null;
 
         $server = new \PhpXmlRpc\Client($this->apiUrl);
 
-        $messageArgs = array_merge($messageArgs, $this->createMessageArg($args));
-        $request = new Request($method, $messageArgs);
+        $requestArgs = array_merge($requestArgs, $this->createRequestArg($args));
+        $request = new Request($method, $requestArgs);
 
         $response =  $server->send($request);
 
@@ -99,13 +99,13 @@ class Client
         }
     }
 
-    private function createMessageArg($args)
+    private function createRequestArg($args)
     {
         $messageArgs = [];
         foreach($args as $value) {
             $type = TypeResolver::resolve($value);
             if($type === 'array') {
-                $messageArgs[] = $this->createMessageArg($value);
+                $messageArgs[] = $this->createRequestArg($value);
             } else {
                 $messageArgs[] = new Value($value, $type);
             }
