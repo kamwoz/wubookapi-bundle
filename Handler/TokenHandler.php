@@ -1,20 +1,20 @@
 <?php
 
-namespace Kamilwozny\WubookAPIBundle\Handler;
+namespace Kamwoz\WubookAPIBundle\Handler;
 
-use Kamilwozny\WubookAPIBundle\Utils\RpcValueDecoder;
+use Kamwoz\WubookAPIBundle\Utils\RpcValueDecoder;
 
 class TokenHandler extends BaseHandler
 {
     public function acquireToken()
     {
         $args = [
-            $this->client->credentials['username'],
-            $this->client->credentials['password'],
-            $this->client->credentials['provider_key']
+            strval($this->client->credentials['username']),
+            strval($this->client->credentials['password']),
+            strval($this->client->credentials['provider_key'])
         ];
 
-        $response = $this->client->request('acquire_token', $args, false, false);
+        $response = $this->client->request('acquire_token', $args, false, false, false);
         $parsedResponse = RpcValueDecoder::parseRpcValue($response->value());
 
         $tokenAcquired = $parsedResponse[0] == 0;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Kamilwozny\WubookAPIBundle\Handler;
+namespace Kamwoz\WubookAPIBundle\Handler;
 
-use Kamilwozny\WubookAPIBundle\Client;
+use Kamwoz\WubookAPIBundle\Client;
 
 class BaseHandler
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Kamilwozny\WubookAPIBundle\Utils;
+namespace Kamwoz\WubookAPIBundle\Utils;
 
 use LogicException;
 use Symfony\Component\Filesystem\Filesystem;

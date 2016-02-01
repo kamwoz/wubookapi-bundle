@@ -1,6 +1,8 @@
 <?php
 
-namespace Kamilwozny\WubookAPIBundle\Handler;
+namespace Kamwoz\WubookAPIBundle\Handler;
+
+use Kamwoz\WubookAPIBundle\Utils\RpcValueDecoder;
 
 class ReservationHandler extends BaseHandler
 {
@@ -11,6 +13,5 @@ class ReservationHandler extends BaseHandler
      */
     public function fetchReservations()
     {
-        $args;
     }
 }

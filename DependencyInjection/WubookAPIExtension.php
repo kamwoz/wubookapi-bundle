@@ -1,6 +1,6 @@
 <?php
 
-namespace Kamilwozny\WubookAPIBundle\DependencyInjection;
+namespace Kamwoz\WubookAPIBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;

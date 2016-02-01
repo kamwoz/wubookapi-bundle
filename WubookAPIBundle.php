@@ -1,6 +1,6 @@
 <?php
 
-namespace Kamilwozny\WubookAPIBundle;
+namespace Kamwoz\WubookAPIBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

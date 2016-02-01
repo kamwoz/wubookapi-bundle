@@ -1,10 +1,10 @@
 <?php
 
-namespace Kamilwozny\WubookAPIBundle;
+namespace Kamwoz\WubookAPIBundle;
 
-use Kamilwozny\WubookAPIBundle\Handler\TokenHandler;
-use Kamilwozny\WubookAPIBundle\Utils\TokenProviderInterface;
-use Kamilwozny\WubookAPIBundle\Utils\TypeResolver;
+use Kamwoz\WubookAPIBundle\Handler\TokenHandler;
+use Kamwoz\WubookAPIBundle\Utils\TokenProviderInterface;
+use Kamwoz\WubookAPIBundle\Utils\TypeResolver;
 use PhpXmlRpc\Request;
 use PhpXmlRpc\Value;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -67,14 +67,17 @@ class Client
      * @param $args                array, NOTICE: order is important here
      * @param bool $passToken      true if you want pass token as first parameter
      * @param bool $passPropertyId true if you want pass property id as second parameter
-     * @param bool $tryAgainWithNewToken
+     * @param bool $tryAcquireNewToken
      *
      * @return mixed|Value|string
      * @internal param bool|true $useToken true if you want use token from config
      */
-    public function request($method, array $args, $passToken = true, $passPropertyId = true, $tryAgainWithNewToken = true)
+    public function request($method, array $args, $passToken = true, $passPropertyId = true, $tryAcquireNewToken = true)
     {
-        $methodWhitelist = ['acquire_token', 'release_token', 'is_token_valid', 'provider_info'];
+        $methodWhitelist = [
+            'acquire_token', 'release_token', 'is_token_valid', 'provider_info',
+            'fetch_rooms',
+        ];
 
         if(!in_array($method, $methodWhitelist)) {
             throw new MethodNotAllowedException($methodWhitelist, 'Method not allowed, allowed: ' . join(', ', $methodWhitelist));
@@ -91,7 +94,7 @@ class Client
         $response =  $server->send($request);
 
         $isResponseOK = (int) $response->value()->me['array'][0]->scalarval() == 0;
-        if(!$isResponseOK && $tryAgainWithNewToken) {
+        if(!$isResponseOK && $tryAcquireNewToken) {
             $this->tokenHandler->acquireToken();
             return self::request($method, $args, $passToken, $passPropertyId, false);
         } else {
