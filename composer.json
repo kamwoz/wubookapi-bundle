@@ -1,5 +1,5 @@
 {
-  "name": "kamilwozny/wubookapi-bundle",
+  "name": "kamwoz/wubookapi-bundle",
   "type": "symfony-bundle",
   "description": "Bundle which helps handle wubook.net API",
   "keywords": ["symfony2", "wubook", "api"],
