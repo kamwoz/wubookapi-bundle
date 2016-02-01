@@ -11,7 +11,7 @@
       "email": "kamil@kwozny.pl"
     }
   ],
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "require": {
     "php": ">=5.4",
     "symfony/yaml": "~2.3",
