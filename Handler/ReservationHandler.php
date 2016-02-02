@@ -14,4 +14,14 @@ class ReservationHandler extends BaseHandler
     public function fetchReservations()
     {
     }
+
+    public function newReservation()
+    {
+        $response = $this->client->request('new_reservation', [], true, true);
+        $parsedResponse = RpcValueDecoder::parseRpcValue($response->value());
+
+        if($parsedResponse[0] != 0) {
+            return null;
+        }
+    }
 }

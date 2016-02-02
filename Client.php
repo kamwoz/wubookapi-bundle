@@ -76,7 +76,7 @@ class Client
     {
         $methodWhitelist = [
             'acquire_token', 'release_token', 'is_token_valid', 'provider_info',
-            'fetch_rooms',
+            'fetch_rooms', 'room_images', 'new_reservation',
         ];
 
         if(!in_array($method, $methodWhitelist)) {
