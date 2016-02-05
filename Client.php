@@ -3,6 +3,7 @@
 namespace Kamwoz\WubookAPIBundle;
 
 use Kamwoz\WubookAPIBundle\Handler\TokenHandler;
+use Kamwoz\WubookAPIBundle\Utils\RpcValueDecoder;
 use Kamwoz\WubookAPIBundle\Utils\TokenProviderInterface;
 use Kamwoz\WubookAPIBundle\Utils\TypeResolver;
 use PhpXmlRpc\Request;
@@ -40,6 +41,12 @@ class Client
      */
     public $tokenProvider;
 
+    private $methodWhitelist = [
+        'acquire_token', 'release_token', 'is_token_valid', 'provider_info',
+        'fetch_rooms', 'room_images', 'new_reservation', 'fetch_bookings',
+        'fetch_booking',
+    ];
+
     /**
      * @param TokenProviderInterface $tokenProvider
      * @param $username
@@ -74,13 +81,8 @@ class Client
      */
     public function request($method, array $args, $passToken = true, $passPropertyId = true, $tryAcquireNewToken = true)
     {
-        $methodWhitelist = [
-            'acquire_token', 'release_token', 'is_token_valid', 'provider_info',
-            'fetch_rooms', 'room_images', 'new_reservation',
-        ];
-
-        if(!in_array($method, $methodWhitelist)) {
-            throw new MethodNotAllowedException($methodWhitelist, 'Method not allowed, allowed: ' . join(', ', $methodWhitelist));
+        if(!in_array($method, $this->methodWhitelist)) {
+            throw new MethodNotAllowedException($this->methodWhitelist, 'Method not allowed, allowed: ' . join(', ', $this->methodWhitelist));
         }
 
         $requestArgs = $passToken ? [new Value($this->tokenProvider->getToken(), 'string')] : [];

@@ -23,6 +23,6 @@ class TypeResolver
         if(is_string($value)) return 'string';
         if(is_double($value)) return 'double';
 
-        throw new \Exception(sprintf('Type "%s" does not exist'));
+        throw new \Exception('Cannot resolve type of value');
     }
 }

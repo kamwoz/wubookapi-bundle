@@ -15,8 +15,8 @@ services:
         class: Kamwoz\WubookAPIBundle\Handler\TokenHandler
         parent: "wubook_api.base_handler"
         public: true
-    wubook_api.reservation_handler:
-        class: Kamwoz\WubookAPIBundle\Handler\ReservationHandler
+    wubook_api.booking_handler:
+        class: Kamwoz\WubookAPIBundle\Handler\BookingHandler
         public: true
         parent: "wubook_api.base_handler"
     wubook_api.token_provider:
