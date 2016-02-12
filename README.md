@@ -9,7 +9,7 @@ Even if you don't have token managed it will acquire it for you (of course if yo
 Implemented methods
 ------------
 
-    acquire_token, release_token, is_token_valid, provider_info, fetch_rooms, room_images, new_reservation, fetch_bookings, fetch_booking
+    acquire_token, release_token, is_token_valid, provider_info, fetch_rooms, room_images, new_reservation, fetch_bookings, fetch_booking, fetch_rooms_values
 More coming soon
 
 Installation

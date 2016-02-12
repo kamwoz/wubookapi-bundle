@@ -26,3 +26,7 @@ services:
         class: Kamwoz\WubookAPIBundle\Handler\RoomHandler
         public: true
         parent: "wubook_api.base_handler"
+    wubook_api.avaiability_handler:
+        class: Kamwoz\WubookAPIBundle\Handler\AvailabilityHandler
+        public: true
+        parent: "wubook_api.base_handler"
