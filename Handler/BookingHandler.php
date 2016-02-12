@@ -52,7 +52,7 @@ class BookingHandler extends BaseHandler
             return null;
         }
 
-        return $parsedResponse[1];
+        return $parsedResponse[1][0];
     }
 
     public function newReservation()
