@@ -42,11 +42,11 @@ parameters:
 Example usage (docs coming soon)
 ------------
 ```php
-    //some controller
-    //fetch bookings from last week
-    $dateFrom = new \DateTime("-1 week");
-    $dateTo = new \DateTime();
-    $bookingArrays = $this->get('wubook_api.booking_handler')->fetchBookings($dateFrom, $dateTo);
+//some controller
+//fetch bookings from last week
+$dateFrom = new \DateTime("-1 week");
+$dateTo = new \DateTime();
+$bookingArrays = $this->get('wubook_api.booking_handler')->fetchBookings($dateFrom, $dateTo);
 ```
 
 Current services which can be used
