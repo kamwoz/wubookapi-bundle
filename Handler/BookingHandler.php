@@ -2,6 +2,7 @@
 
 namespace Kamwoz\WubookAPIBundle\Handler;
 
+use Kamwoz\Exception\WubookException;
 use Kamwoz\WubookAPIBundle\Utils\RpcValueDecoder;
 
 class BookingHandler extends BaseHandler
@@ -55,13 +56,43 @@ class BookingHandler extends BaseHandler
         return $parsedResponse[1][0];
     }
 
-    public function newReservation()
-    {
-        $response = $this->client->request('new_reservation', [], true, true);
+    /**
+     * @param \DateTime $dateFrom
+     * @param \DateTime $dateTo
+     * @param $rooms
+     * @param $customer
+     * @param $amount
+     * @param null $orig
+     * @param null $ccard
+     * @param int $ancillary
+     * @param null $guests
+     *
+     * @return string new reservation id
+     * @throws WubookException
+     */
+    public function newReservation(
+        \DateTime $dateFrom,
+        \DateTime $dateTo,
+        $rooms,
+        $customer,
+        $amount,
+        $orig = null,
+        $ccard = null,
+        $ancillary = 0,
+        $guests = null
+    ) {
+        $args = func_get_args();
+        $args[0] = $args[0]->format('d/m/Y');
+        $args[1] = $args[1]->format('d/m/Y');
+        $args[4] = strval($args[4]);
+
+        $response = $this->client->request('new_reservation', $args, true, true);
         $parsedResponse = RpcValueDecoder::parseRpcValue($response->value());
 
         if($parsedResponse[0] != 0) {
-            return null;
-        }//todo
+            throw new WubookException($parsedResponse[1], $parsedResponse[0]);
+        }
+
+        return $parsedResponse[1];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Kamwoz\WubookAPIBundle\Handler;
 
+use Kamwoz\Exception\WubookException;
 use Kamwoz\WubookAPIBundle\Utils\RpcValueDecoder;
 
 class TokenHandler extends BaseHandler
@@ -19,23 +20,23 @@ class TokenHandler extends BaseHandler
 
         $tokenAcquired = $parsedResponse[0] == 0;
         if($tokenAcquired) {
-            $token = $response->value()->me['array'][1]->scalarval();
+            $token = $parsedResponse[1];
             $this->client->tokenProvider->setToken($token);
 
             return $token;
         }
 
-        return null; //todo handle token not found case
+        throw new WubookException('Cant acquire new token, returned message:"' . $parsedResponse[1] .'"');
     }
 
-    public function isCurrentTokenValid($returnWholeResponse = false)
+    public function isCurrentTokenValid()
     {
         $response = $this->client->request('is_token_valid', [], true, false, false);
         $parsedResponse = RpcValueDecoder::parseRpcValue($response->value());
 
         $isTokenValid = $parsedResponse[0] == 0;
 
-        return $returnWholeResponse ? $parsedResponse : $isTokenValid;
+        return $isTokenValid;
     }
 
     public function releaseCurrentToken()
@@ -58,6 +59,4 @@ class TokenHandler extends BaseHandler
 
         return $parsedResponse[1];
     }
-
-
 }

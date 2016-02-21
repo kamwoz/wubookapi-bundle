@@ -3,9 +3,8 @@
 namespace Kamwoz\WubookAPIBundle;
 
 use Kamwoz\WubookAPIBundle\Handler\TokenHandler;
-use Kamwoz\WubookAPIBundle\Utils\RpcValueDecoder;
 use Kamwoz\WubookAPIBundle\Utils\TokenProviderInterface;
-use Kamwoz\WubookAPIBundle\Utils\TypeResolver;
+use PhpXmlRpc\Encoder;
 use PhpXmlRpc\Request;
 use PhpXmlRpc\Value;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -85,45 +84,29 @@ class Client
             throw new MethodNotAllowedException($this->methodWhitelist, 'Method not allowed, allowed: ' . join(', ', $this->methodWhitelist));
         }
 
-        $requestArgs = $passToken ? [new Value($this->tokenProvider->getToken(), 'string')] : [];
-        $requestArgs[] = $passPropertyId ? new Value($this->propertyId, 'string') : null;
+        $requestArgs = $passToken ? [$this->tokenProvider->getToken()] : [];
+        if($passPropertyId) {
+            $requestArgs[] = (string) $this->propertyId;
+        }
 
         $server = new \PhpXmlRpc\Client($this->apiUrl);
 
-        $requestArgs = array_merge($requestArgs, $this->createRequestArg($args));
+        $encoder = new Encoder();
+        $args = array_merge($requestArgs, $args);
+        foreach($args as $arg) {
+            $requestArgs[] = $encoder->encode($arg);
+        }
         $request = new Request($method, $requestArgs);
 
         $response =  $server->send($request);
 
-        $isResponseOK = (int) $response->value()->me['array'][0]->scalarval() == 0;
+        $isResponseOK = !empty($response->value()) && (int) $response->value()->me['array'][0]->scalarval() == 0;
         if(!$isResponseOK && $tryAcquireNewToken) {
             $this->tokenHandler->acquireToken();
             return self::request($method, $args, $passToken, $passPropertyId, false);
         } else {
             return $response;
         }
-    }
-
-    /**
-     * Prepare request arguments (xml rpc)
-     * @param $args
-     *
-     * @return array
-     * @throws \Exception
-     */
-    private function createRequestArg($args)
-    {
-        $messageArgs = [];
-        foreach($args as $value) {
-            $type = TypeResolver::resolve($value);
-            if($type === 'array') {
-                $messageArgs[] = new Value($this->createRequestArg($value), $type);
-            } else {
-                $messageArgs[] = new Value($value, $type);
-            }
-        }
-
-        return $messageArgs;
     }
 
     public function setTokenHandler(TokenHandler $tokenHandler)
