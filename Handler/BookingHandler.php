@@ -57,10 +57,12 @@ class BookingHandler extends BaseHandler
     }
 
     /**
+     * Create new reservation
+     *
      * @param \DateTime $dateFrom
      * @param \DateTime $dateTo
-     * @param $rooms
-     * @param $customer
+     * @param $rooms array
+     * @param $customer array
      * @param $amount
      * @param null $orig
      * @param null $ccard
@@ -94,5 +96,24 @@ class BookingHandler extends BaseHandler
         }
 
         return $parsedResponse[1];
+    }
+
+    /**
+     * Reservation cancelation
+     * @param $rcode
+     *
+     * @return bool false on success and exception on failure
+     * @throws WubookException
+     */
+    public function cancelReservation($rcode)
+    {
+        $response = $this->client->request('cancel_reservation', [$rcode], true, true);
+        $parsedResponse = RpcValueDecoder::parseRpcValue($response->value());
+
+        if($parsedResponse[0] != 0) {
+            throw new WubookException($parsedResponse[1], $parsedResponse[0]);
+        }
+
+        return false;
     }
 }
