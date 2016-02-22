@@ -26,4 +26,21 @@ class AvailabilityHandler extends BaseHandler
 
         return parent::defaultRequestHandler('fetch_rooms_values', $args);
     }
+
+    /**
+     * @param $dateFrom \DateTime
+     * @param $roomDays
+     *
+     * @return
+     * @throws WubookException
+     */
+    public function updateAvail(\DateTime $dateFrom, $roomDays)
+    {
+        $args = [
+            $dateFrom->format('d/m/Y'),
+            $roomDays
+        ];
+
+        return parent::defaultRequestHandler('update_avail', $args);
+    }
 }
