@@ -3,7 +3,6 @@
 namespace Kamwoz\WubookAPIBundle\Handler;
 
 use Kamwoz\WubookAPIBundle\Exception\WubookException;
-use Kamwoz\WubookAPIBundle\Utils\ResponseDecoder;
 
 class AvailabilityHandler extends BaseHandler
 {
@@ -25,13 +24,6 @@ class AvailabilityHandler extends BaseHandler
             $rooms
         ];
 
-        $response = $this->client->request('fetch_rooms_values', $args, true, true);
-        $parsedResponse = ResponseDecoder::decodeResponse($response);
-
-        if($parsedResponse[0] != 0) {
-            throw new WubookException($parsedResponse[1], $parsedResponse[0]);
-        }
-
-        return $parsedResponse[1];
+        return parent::defaultRequestHandler('fetch_rooms_values', $args);
     }
 }

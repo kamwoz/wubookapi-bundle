@@ -3,7 +3,6 @@
 namespace Kamwoz\WubookAPIBundle\Handler;
 
 use Kamwoz\WubookAPIBundle\Exception\WubookException;
-use Kamwoz\WubookAPIBundle\Utils\ResponseDecoder;
 
 class BookingHandler extends BaseHandler
 {
@@ -27,14 +26,7 @@ class BookingHandler extends BaseHandler
             $ancillary
         ];
 
-        $response = $this->client->request('fetch_bookings', $args, true, true);
-        $parsedResponse = ResponseDecoder::decodeResponse($response);
-
-        if($parsedResponse[0] != 0) {
-            throw new WubookException($parsedResponse[1], $parsedResponse[0]);
-        }
-
-        return $parsedResponse[1];
+        return parent::defaultRequestHandler('fetch_bookings', $args);
     }
 
     /**
@@ -48,14 +40,9 @@ class BookingHandler extends BaseHandler
      */
     public function fetchBooking($reservationId, $ancillary = 0)
     {
-        $response = $this->client->request('fetch_booking', [$reservationId, $ancillary], true, true);
-        $parsedResponse = ResponseDecoder::decodeResponse($response);
+        $data = parent::defaultRequestHandler('fetch_booking', [$reservationId, $ancillary]);
 
-        if($parsedResponse[0] != 0) {
-            throw new WubookException($parsedResponse[1], $parsedResponse[0]);
-        }
-
-        return $parsedResponse[1][0];
+        return $data[0];
     }
 
     /**
@@ -90,14 +77,8 @@ class BookingHandler extends BaseHandler
         $args[1] = $args[1]->format('d/m/Y');
         $args[4] = strval($args[4]);
 
-        $response = $this->client->request('new_reservation', $args, true, true);
-        $parsedResponse = ResponseDecoder::decodeResponse($response);
 
-        if($parsedResponse[0] != 0) {
-            throw new WubookException($parsedResponse[1], $parsedResponse[0]);
-        }
-
-        return $parsedResponse[1];
+        return parent::defaultRequestHandler('new_reservation', $args);
     }
 
     /**
@@ -109,12 +90,7 @@ class BookingHandler extends BaseHandler
      */
     public function cancelReservation($rcode)
     {
-        $response = $this->client->request('cancel_reservation', [$rcode], true, true);
-        $parsedResponse = ResponseDecoder::decodeResponse($response);
-
-        if($parsedResponse[0] != 0) {
-            throw new WubookException($parsedResponse[1], $parsedResponse[0]);
-        }
+        parent::defaultRequestHandler('cancel_reservation', [$rcode]);
 
         return false;
     }

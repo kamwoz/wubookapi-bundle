@@ -27,6 +27,11 @@ class TokenHandler extends BaseHandler
         $this->provider_key = strval($provider_key);
     }
 
+    /**
+     * Creates new token
+     * @return mixed
+     * @throws WubookException
+     */
     public function acquireToken()
     {
         $args = [
@@ -35,20 +40,15 @@ class TokenHandler extends BaseHandler
             $this->provider_key
         ];
 
-        $response = $this->client->request('acquire_token', $args, false, false, false);
-        $parsedResponse = ResponseDecoder::decodeResponse($response);
+        $token = parent::defaultRequestHandler('acquire_token', $args, false, false, false);
 
-        $tokenAcquired = $parsedResponse[0] == 0;
-        if($tokenAcquired) {
-            $token = $parsedResponse[1];
-            $this->client->tokenProvider->setToken($token);
-
-            return $token;
-        }
-
-        throw new WubookException('Cant acquire new token, returned message:"' . $parsedResponse[1] .'"');
+        $this->client->tokenProvider->setToken($token);
+        return $token;
     }
 
+    /**
+     * @return bool true if token is valid
+     */
     public function isCurrentTokenValid()
     {
         $response = $this->client->request('is_token_valid', [], true, false, false);
@@ -59,6 +59,9 @@ class TokenHandler extends BaseHandler
         return $isTokenValid;
     }
 
+    /**
+     * @return bool true if token was sucessfully released
+     */
     public function releaseCurrentToken()
     {
         $response = $this->client->request('release_token', [], true, false, false);
@@ -72,11 +75,13 @@ class TokenHandler extends BaseHandler
         return $isTokenReleased;
     }
 
+    /**
+     * Gets stats about current token
+     * @return mixed
+     * @throws WubookException
+     */
     public function providerInfo()
     {
-        $response = $this->client->request('provider_info', [], true, false, false);
-        $parsedResponse = ResponseDecoder::decodeResponse($response);
-
-        return $parsedResponse[1];
+        return parent::defaultRequestHandler('provider_info', [], true, false, false);
     }
 }

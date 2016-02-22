@@ -11,7 +11,7 @@ Implemented methods
 
     acquire_token, release_token, is_token_valid, provider_info, fetch_rooms,
     room_images, new_reservation, fetch_bookings, fetch_booking, fetch_rooms_values,
-    new_reservation, cancel_reservation
+    new_reservation, cancel_reservation, update_avail
 More coming soon
 
 Installation
