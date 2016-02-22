@@ -48,20 +48,12 @@ class Client
 
     /**
      * @param TokenProviderInterface $tokenProvider
-     * @param $username
-     * @param $password
-     * @param $provider_key
      * @param $apiUrl
      * @param $propertyId
      */
-    public function __construct(TokenProviderInterface $tokenProvider, $username, $password, $provider_key, $apiUrl, $propertyId)
+    public function __construct(TokenProviderInterface $tokenProvider, $apiUrl, $propertyId)
     {
         $this->tokenProvider = $tokenProvider;
-        $this->credentials = [
-            'username' => $username,
-            'password' => $password,
-            'provider_key' => $provider_key
-        ];
         $this->apiUrl = $apiUrl;
         $this->propertyId = $propertyId;
     }
@@ -89,15 +81,14 @@ class Client
             $requestArgs[] = (string) $this->propertyId;
         }
 
-        $server = new \PhpXmlRpc\Client($this->apiUrl);
-
         $encoder = new Encoder();
-        $args = array_merge($requestArgs, $args);
-        foreach($args as $arg) {
-            $requestArgs[] = $encoder->encode($arg);
+        $requestData = [];
+        foreach(array_merge($requestArgs, $args) as $arg) {
+            $requestData[] = $encoder->encode($arg);
         }
-        $request = new Request($method, $requestArgs);
 
+        $server = new \PhpXmlRpc\Client($this->apiUrl);
+        $request = new Request($method, $requestData);
         $response =  $server->send($request);
 
         $isResponseOK = !empty($response->value()) && (int) $response->value()->me['array'][0]->scalarval() == 0;

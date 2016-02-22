@@ -2,8 +2,8 @@
 
 namespace Kamwoz\WubookAPIBundle\Handler;
 
-use Kamwoz\Exception\WubookException;
-use Kamwoz\WubookAPIBundle\Utils\RpcValueDecoder;
+use Kamwoz\WubookAPIBundle\Exception\WubookException;
+use Kamwoz\WubookAPIBundle\Utils\ResponseDecoder;
 
 class BookingHandler extends BaseHandler
 {
@@ -16,6 +16,7 @@ class BookingHandler extends BaseHandler
      * @param int $ancillary
      *
      * @return array|null
+     * @throws WubookException
      */
     public function fetchBookings(\DateTime $dateFrom, \DateTime $dateTo, $byReservationDate = 1, $ancillary = 0)
     {
@@ -27,10 +28,10 @@ class BookingHandler extends BaseHandler
         ];
 
         $response = $this->client->request('fetch_bookings', $args, true, true);
-        $parsedResponse = RpcValueDecoder::parseRpcValue($response->value());
+        $parsedResponse = ResponseDecoder::decodeResponse($response);
 
         if($parsedResponse[0] != 0) {
-            return null;
+            throw new WubookException($parsedResponse[1], $parsedResponse[0]);
         }
 
         return $parsedResponse[1];
@@ -43,14 +44,15 @@ class BookingHandler extends BaseHandler
      * @param int $ancillary
      *
      * @return null
+     * @throws WubookException
      */
     public function fetchBooking($reservationId, $ancillary = 0)
     {
         $response = $this->client->request('fetch_booking', [$reservationId, $ancillary], true, true);
-        $parsedResponse = RpcValueDecoder::parseRpcValue($response->value());
+        $parsedResponse = ResponseDecoder::decodeResponse($response);
 
         if($parsedResponse[0] != 0) {
-            return null;
+            throw new WubookException($parsedResponse[1], $parsedResponse[0]);
         }
 
         return $parsedResponse[1][0];
@@ -89,7 +91,7 @@ class BookingHandler extends BaseHandler
         $args[4] = strval($args[4]);
 
         $response = $this->client->request('new_reservation', $args, true, true);
-        $parsedResponse = RpcValueDecoder::parseRpcValue($response->value());
+        $parsedResponse = ResponseDecoder::decodeResponse($response);
 
         if($parsedResponse[0] != 0) {
             throw new WubookException($parsedResponse[1], $parsedResponse[0]);
@@ -108,7 +110,7 @@ class BookingHandler extends BaseHandler
     public function cancelReservation($rcode)
     {
         $response = $this->client->request('cancel_reservation', [$rcode], true, true);
-        $parsedResponse = RpcValueDecoder::parseRpcValue($response->value());
+        $parsedResponse = ResponseDecoder::decodeResponse($response);
 
         if($parsedResponse[0] != 0) {
             throw new WubookException($parsedResponse[1], $parsedResponse[0]);

@@ -1,5 +1,5 @@
 <?php
 
-namespace Kamwoz\Exception;
+namespace Kamwoz\WubookAPIBundle\Exception;
 
 class WubookException extends \Exception {}
