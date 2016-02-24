@@ -57,4 +57,5 @@ Current services which can be used
 wubook_api.booking_handler
 wubook_api.token_handler
 wubook_api.room_handler
+wubook_api.availability_handler
 ```
