@@ -31,7 +31,7 @@ class AvailabilityHandler extends BaseHandler
      * @param $dateFrom \DateTime
      * @param $roomDays
      *
-     * @return
+     * @return array
      * @throws WubookException
      */
     public function updateAvail(\DateTime $dateFrom, $roomDays)
@@ -42,5 +42,16 @@ class AvailabilityHandler extends BaseHandler
         ];
 
         return parent::defaultRequestHandler('update_avail', $args);
+    }
+
+    /**
+     * @param $rooms
+     *
+     * @return array
+     * @throws WubookException
+     */
+    public function updateSparseAvail($rooms)
+    {
+        return parent::defaultRequestHandler('update_sparse_avail', [$rooms]);
     }
 }
