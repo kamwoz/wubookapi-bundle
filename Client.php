@@ -44,6 +44,7 @@ class Client
         'acquire_token', 'release_token', 'is_token_valid', 'provider_info',
         'fetch_rooms', 'room_images', 'new_reservation', 'fetch_bookings',
         'fetch_booking', 'fetch_rooms_values', 'cancel_reservation', 'update_avail',
+        'update_sparse_avail',
     ];
 
     /**
@@ -73,7 +74,7 @@ class Client
     public function request($method, array $args, $passToken = true, $passPropertyId = true, $tryAcquireNewToken = true)
     {
         if(!in_array($method, $this->methodWhitelist)) {
-            throw new MethodNotAllowedException($this->methodWhitelist, 'Method not allowed, allowed: ' . join(', ', $this->methodWhitelist));
+            throw new MethodNotAllowedException($this->methodWhitelist, 'Method "'.$method.'" not allowed, allowed: ' . join(', ', $this->methodWhitelist));
         }
 
         $requestArgs = $passToken ? [$this->tokenProvider->getToken()] : [];
@@ -93,11 +94,15 @@ class Client
 
         $isResponseOK = !empty($response->value()) && (int) $response->value()->me['array'][0]->scalarval() == 0;
         if(!$isResponseOK && $tryAcquireNewToken) {
+            if($this->tokenHandler->isCurrentTokenValid()) {
+                return $response;
+            }
+
             $this->tokenHandler->acquireToken();
             return self::request($method, $args, $passToken, $passPropertyId, false);
-        } else {
-            return $response;
         }
+
+        return $response;
     }
 
     public function setTokenHandler(TokenHandler $tokenHandler)
