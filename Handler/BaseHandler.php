@@ -18,6 +18,17 @@ class BaseHandler
         $this->client = $client;
     }
 
+    /**
+     * Handles most common method call
+     * @param $method
+     * @param $args
+     * @param bool $passToken
+     * @param bool $passPropertyId
+     * @param bool $tryAcquireNewToken
+     *
+     * @return mixed
+     * @throws WubookException
+     */
     public function defaultRequestHandler($method, $args, $passToken = true, $passPropertyId = true, $tryAcquireNewToken = true)
     {
         $response = $this->client->request($method, $args, $passToken, $passPropertyId, $tryAcquireNewToken);

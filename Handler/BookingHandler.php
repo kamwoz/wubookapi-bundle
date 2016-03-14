@@ -94,4 +94,20 @@ class BookingHandler extends BaseHandler
 
         return false;
     }
+
+    /**
+     * @param int $ancillary
+     * @param int $mark
+     * @return mixed
+     * @throws WubookException
+     */
+    public function fetchNewBooking($ancillary = 0, $mark = 1)
+    {
+        $args = [
+            $ancillary,
+            $mark
+        ];
+
+        return parent::defaultRequestHandler('fetch_new_bookings', $args);
+    }
 }
