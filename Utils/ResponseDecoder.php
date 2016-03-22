@@ -16,7 +16,7 @@ class ResponseDecoder
     public static function decodeResponse(Response $response)
     {
         $resValue = $response->value();
-        if(!empty($response)) {
+        if(!empty($response) && is_object($resValue)) {
             $encoder = new Encoder();
 
             return $encoder->decode($resValue);
