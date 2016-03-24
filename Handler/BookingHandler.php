@@ -48,13 +48,15 @@ class BookingHandler extends BaseHandler
      *
      * @param \DateTime $dateFrom
      * @param \DateTime $dateTo
-     * @param $rooms array
+     * @param $rooms    array
      * @param $customer array
      * @param $amount
      * @param null $orig
      * @param null $ccard
      * @param int $ancillary
      * @param null $guests
+     * @param int $ignore_restr
+     * @param int $ignore_avail
      *
      * @return string new reservation id
      * @throws WubookException
@@ -68,14 +70,15 @@ class BookingHandler extends BaseHandler
         $orig = null,
         $ccard = null,
         $ancillary = 0,
-        $guests = null
+        $guests = null,
+        $ignore_restr = 0,
+        $ignore_avail = 0
     ) {
         $args = func_get_args();
         $args[0] = $args[0]->format('d/m/Y');
         $args[1] = $args[1]->format('d/m/Y');
         $args[4] = strval($args[4]);
-
-
+        
         return parent::defaultRequestHandler('new_reservation', $args);
     }
 
