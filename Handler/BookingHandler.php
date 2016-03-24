@@ -108,4 +108,35 @@ class BookingHandler extends BaseHandler
 
         return parent::defaultRequestHandler('fetch_new_bookings', $args);
     }
+
+    /**
+     * @param $url
+     *
+     * @return mixed
+     * @throws WubookException
+     */
+    public function pushActivation( $url )
+    {
+        return parent::defaultRequestHandler('push_activation', [ $url ]);
+    }
+
+    /**
+     * @return mixed
+     * @throws WubookException
+     */
+    public function pushURL()
+    {
+        return parent::defaultRequestHandler('push_url', []);
+    }
+
+    /**
+     * @param $reservations
+     *
+     * @return mixed
+     * @throws WubookException
+     */
+    public function markBookings( $reservations )
+    {
+        return parent::defaultRequestHandler('mark_bookings', [$reservations] );
+    }
 }
