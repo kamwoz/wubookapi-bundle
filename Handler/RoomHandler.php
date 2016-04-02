@@ -130,4 +130,24 @@ class RoomHandler extends BaseHandler
     {
         return parent::defaultRequestHandler('room_images', [$roomId]);
     }
+
+    /**
+     * @param $url
+     *
+     * @return mixed
+     * @throws WubookException
+     */
+    public function pushUpdateActivation( $url )
+    {
+        return parent::defaultRequestHandler('push_update_activation', [$url]);
+    }
+
+    /**
+     * @return mixed
+     * @throws WubookException
+     */
+    public function pushUpdateUrl()
+    {
+        return parent::defaultRequestHandler('push_update_url', []);
+    }
 }
