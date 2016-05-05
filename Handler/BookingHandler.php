@@ -40,7 +40,9 @@ class BookingHandler extends BaseHandler
      */
     public function fetchBooking($reservationId, $ancillary = 0)
     {
-        return parent::defaultRequestHandler('fetch_booking', [$reservationId, $ancillary]);
+        $res = parent::defaultRequestHandler('fetch_booking', [$reservationId, $ancillary]);
+
+        return $res[0];
     }
 
     /**
