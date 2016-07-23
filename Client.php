@@ -58,6 +58,10 @@ class Client
         $this->tokenProvider = $tokenProvider;
         $this->apiUrl = $apiUrl;
         $this->propertyId = $propertyId;
+        
+        if(!function_exists('curl_version')) {
+            throw new \Exception('cURL is not installed');
+        }
     }
 
     /**
