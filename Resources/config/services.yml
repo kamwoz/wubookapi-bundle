@@ -2,18 +2,18 @@ services:
     wubook_api.client:
         class: Kamwoz\WubookAPIBundle\Client
         arguments:
-            - @wubook_api.token_provider
-            - %wubook_api.url%
-            - %wubook_api.property_id%
+            - '@wubook_api.token_provider'
+            - '%wubook_api.url%'
+            - '%wubook_api.property_id%'
         public: false
     wubook_api.base_handler:
         class: Kamwoz\WubookAPIBundle\Handler\BaseHandler
     wubook_api.token_handler:
         class: Kamwoz\WubookAPIBundle\Handler\TokenHandler
         arguments:
-            - %wubook_api.client_username%
-            - %wubook_api.client_password%
-            - %wubook_api.provider_key%
+            - '%wubook_api.client_username%'
+            - '%wubook_api.client_password%'
+            - '%wubook_api.provider_key%'
         parent: "wubook_api.base_handler"
         public: true
     wubook_api.booking_handler:
