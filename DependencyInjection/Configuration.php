@@ -19,7 +19,7 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('provider_key')->isRequired()->end()
             ->integerNode('property_id')->isRequired()->end()
             ->scalarNode('url')
-                ->defaultValue('https://wubook.net/xrws/')->end()
+                ->defaultValue('https://wired.wubook.net/xrws/')->end()
             ->end()
         ;
 
